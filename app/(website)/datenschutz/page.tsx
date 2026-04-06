@@ -149,8 +149,8 @@ export default function DatenschutzPage() {
             <p>
               Diese Seite nutzt aus Sicherheitsgründen eine SSL- bzw.
               TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie
-              daran, dass die Adresszeile des Browsers von „http://" auf
-              „https://" wechselt und an dem Schloss-Symbol in Ihrer
+              daran, dass die Adresszeile des Browsers von &bdquo;http://&ldquo; auf
+              &bdquo;https://&ldquo; wechselt und an dem Schloss-Symbol in Ihrer
               Browserzeile. Wenn die SSL- bzw. TLS-Verschlüsselung aktiviert ist,
               können die Daten, die Sie an uns übermitteln (z.&nbsp;B. über das
               Kontaktformular), nicht von Dritten mitgelesen werden.
