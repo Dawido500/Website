@@ -1,0 +1,35 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Referenz {
+  id              String   @id @default(uuid())
+  titel           String
+  beschreibung    String?
+  kategorie       String   @default("")
+  stadt           String?
+  jahr            Int      @default(2026)
+  bilder          String[] @default([])
+  titelbild       String?
+  erstelltAm      DateTime @default(now()) @map("erstellt_am")
+  veroeffentlicht Boolean  @default(true)
+  reihenfolge     Int      @default(0)
+
+  @@map("referenzen")
+}
+
+model KontaktAnfrage {
+  id         String   @id @default(uuid())
+  name       String
+  telefon    String?
+  email      String
+  nachricht  String?
+  erstelltAm DateTime @default(now()) @map("erstellt_am")
+  gelesen    Boolean  @default(false)
+
+  @@map("kontakt_anfragen")
+}

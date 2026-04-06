@@ -1,0 +1,109 @@
+version: "3.8"
+
+services:
+  # ── App Database (PostgreSQL) ──
+  app-db:
+    image: postgres:15-alpine
+    container_name: obitko-app-db
+    restart: always
+    environment:
+      POSTGRES_DB: obitko
+      POSTGRES_USER: obitko
+      POSTGRES_PASSWORD: ${APP_DB_PASSWORD:-obitko_secret}
+    volumes:
+      - app-db-data:/var/lib/postgresql/data
+    networks:
+      - obitko
+
+  # ── Next.js App ──
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+        NEXT_PUBLIC_UMAMI_URL: ${NEXT_PUBLIC_UMAMI_URL}
+    container_name: obitko-app
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    volumes:
+      - uploads:/app/public/uploads
+    depends_on:
+      - app-db
+    networks:
+      - obitko
+
+  # ── Umami Analytics ──
+  umami-db:
+    image: postgres:15-alpine
+    container_name: obitko-umami-db
+    restart: always
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD:-umami_secret}
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    networks:
+      - obitko
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: obitko-umami
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD:-umami_secret}@umami-db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET:-replace_with_random_string}
+    depends_on:
+      - umami-db
+    networks:
+      - obitko
+
+  # ── Nginx Reverse Proxy ──
+  nginx:
+    image: nginx:alpine
+    container_name: obitko-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - certbot-etc:/etc/letsencrypt:ro
+      - certbot-var:/var/lib/letsencrypt
+      - certbot-webroot:/var/www/certbot
+    depends_on:
+      - app
+      - umami
+    networks:
+      - obitko
+
+  # ── Certbot (SSL) ──
+  certbot:
+    image: certbot/certbot
+    container_name: obitko-certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - certbot-webroot:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - obitko
+
+volumes:
+  app-db-data:
+  umami-db-data:
+  certbot-etc:
+  certbot-var:
+  certbot-webroot:
+  uploads:
+
+networks:
+  obitko:
+    driver: bridge
