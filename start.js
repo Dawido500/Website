@@ -3,7 +3,6 @@ const { parse } = require("url");
 const path = require("path");
 const fs = require("fs");
 
-// Load the Next.js standalone handler
 const NextServer = require("next/dist/server/next-server").default;
 
 const MIME_TYPES = {
@@ -13,6 +12,16 @@ const MIME_TYPES = {
   ".gif": "image/gif",
   ".webp": "image/webp",
   ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+  ".css": "text/css",
+  ".js": "application/javascript",
+  ".json": "application/json",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".ttf": "font/ttf",
+  ".txt": "text/plain",
+  ".xml": "application/xml",
+  ".webmanifest": "application/manifest+json",
 };
 
 const hostname = process.env.HOSTNAME || "0.0.0.0";
@@ -30,23 +39,48 @@ const nextServer = new NextServer({
 
 const handler = nextServer.getRequestHandler();
 
+function serveStatic(pathname, res) {
+  const safePath = path.normalize(pathname).replace(/^(\.\.(\/|\\|$))+/, "");
+  const filePath = path.join(__dirname, "public", safePath);
+  const ext = path.extname(filePath).toLowerCase();
+  const contentType = MIME_TYPES[ext];
+
+  if (contentType && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Cache-Control", "public, max-age=2592000, immutable");
+    fs.createReadStream(filePath).pipe(res);
+    return true;
+  }
+  return false;
+}
+
+function serveNextStatic(pathname, res) {
+  const safePath = path.normalize(pathname).replace(/^(\.\.(\/|\\|$))+/, "");
+  const filePath = path.join(__dirname, safePath);
+  const ext = path.extname(filePath).toLowerCase();
+  const contentType = MIME_TYPES[ext];
+
+  if (contentType && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    fs.createReadStream(filePath).pipe(res);
+    return true;
+  }
+  return false;
+}
+
 createServer((req, res) => {
   const parsedUrl = parse(req.url, true);
   const { pathname } = parsedUrl;
 
-  // Serve uploaded files directly from public/
-  if (pathname.startsWith("/uploads/")) {
-    const safePath = path.normalize(pathname).replace(/^(\.\.(\/|\\|$))+/, "");
-    const filePath = path.join(__dirname, "public", safePath);
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext];
+  // Serve _next/static files (CSS, JS chunks)
+  if (pathname.startsWith("/_next/static/")) {
+    if (serveNextStatic(pathname, res)) return;
+  }
 
-    if (contentType && fs.existsSync(filePath)) {
-      res.setHeader("Content-Type", contentType);
-      res.setHeader("Cache-Control", "public, max-age=2592000, immutable");
-      fs.createReadStream(filePath).pipe(res);
-      return;
-    }
+  // Serve public files (images, fonts, logos, favicon)
+  if (!pathname.startsWith("/_next/") && !pathname.startsWith("/api/")) {
+    if (serveStatic(pathname, res)) return;
   }
 
   handler(req, res, parsedUrl);
