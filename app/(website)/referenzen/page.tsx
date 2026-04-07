@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Referenzen – Renovierung & Sanierung Projekte in Wiesbaden",
+  title: "Referenzen – Renovierung & Sanierung in Wiesbaden, Mainz & Frankfurt",
   description:
-    "Sehen Sie unsere abgeschlossenen Projekte: Komplettsanierungen, Badsanierungen, Trockenbau & Innenausbau in Wiesbaden und Rhein-Main. Vorher-Nachher-Bilder.",
+    "Unsere abgeschlossenen Projekte: Komplettsanierungen, Badsanierungen, Trockenbau & Innenausbau in Wiesbaden, Mainz, Hofheim am Taunus, Frankfurt & Umgebung.",
   alternates: {
     canonical: "https://o-innenausbau.de/referenzen",
   },

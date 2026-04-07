@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Obitko Innenausbau | Renovierung & Sanierung in Wiesbaden",
+  title: "Obitko Innenausbau | Renovierung & Sanierung in Wiesbaden, Mainz, Hofheim & Frankfurt",
   description:
-    "Obitko Innenausbau – Ihr Meisterbetrieb in Wiesbaden für Renovierung, Komplettsanierung, Badsanierung, Trockenbau & Bodenverlegung. Jetzt kostenlos beraten lassen!",
+    "Obitko Innenausbau – Ihr Meisterbetrieb für Renovierung, Komplettsanierung, Badsanierung, Trockenbau & Bodenverlegung in Wiesbaden, Mainz, Hofheim am Taunus, Frankfurt am Main & Umgebung. Jetzt kostenlos beraten lassen!",
   alternates: {
     canonical: "https://o-innenausbau.de",
   },
