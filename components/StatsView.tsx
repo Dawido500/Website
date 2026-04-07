@@ -71,37 +71,78 @@ function StatCard({
 
 /* ───── Mini Bar Chart ───── */
 
+function formatDate(isoStr: string, short?: boolean): string {
+  const d = new Date(isoStr);
+  if (short) {
+    return d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" });
+  }
+  return d.toLocaleDateString("de-DE", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+  });
+}
+
+function formatHour(isoStr: string): string {
+  const d = new Date(isoStr);
+  return `${d.getHours()}:00`;
+}
+
 function BarChart({
   data,
   label,
+  isHourly,
 }: {
   data: { x: string; y: number }[];
   label: string;
+  isHourly?: boolean;
 }) {
   const max = Math.max(...data.map((d) => d.y), 1);
+  const total = data.reduce((sum, d) => sum + d.y, 0);
+
+  // Show every Nth label to avoid overlap
+  const labelEvery = data.length > 14 ? Math.ceil(data.length / 7) : data.length > 7 ? 2 : 1;
 
   return (
     <div className="rounded-xl border border-[#E0DDD6] bg-white p-5">
-      <h3 className="mb-4 font-body text-xs font-medium uppercase tracking-wider text-text/50">
-        {label}
-      </h3>
-      <div className="flex items-end gap-[2px]" style={{ height: 120 }}>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="font-body text-xs font-medium uppercase tracking-wider text-text/50">
+          {label}
+        </h3>
+        <span className="font-body text-xs text-text/40">
+          Gesamt: {total.toLocaleString("de-DE")}
+        </span>
+      </div>
+      <div className="flex items-end gap-[2px]" style={{ height: 140 }}>
         {data.map((d, i) => (
           <div
             key={i}
-            className="group relative flex-1"
+            className="group relative flex-1 flex flex-col items-center"
             style={{ height: "100%" }}
           >
-            <div
-              className="absolute bottom-0 w-full rounded-t bg-accent/70 transition-colors group-hover:bg-accent"
-              style={{
-                height: `${Math.max((d.y / max) * 100, 2)}%`,
-              }}
-            />
-            {/* Tooltip */}
-            <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-dark px-2 py-1 font-body text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100">
-              {d.y}
+            {/* Bar */}
+            <div className="relative w-full flex-1">
+              <div
+                className="absolute bottom-0 w-full rounded-t bg-accent/70 transition-colors group-hover:bg-accent"
+                style={{
+                  height: `${Math.max((d.y / max) * 100, 2)}%`,
+                }}
+              />
+              {/* Tooltip */}
+              <div className="pointer-events-none absolute -top-10 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-dark px-2 py-1 font-body text-[10px] text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                <span className="font-medium">{d.y} Aufrufe</span>
+                <br />
+                <span className="text-white/70">
+                  {isHourly ? formatHour(d.x) : formatDate(d.x)}
+                </span>
+              </div>
             </div>
+            {/* Date label */}
+            {i % labelEvery === 0 && (
+              <span className="mt-1.5 font-body text-[9px] text-text/40 leading-none">
+                {isHourly ? formatHour(d.x) : formatDate(d.x, true)}
+              </span>
+            )}
           </div>
         ))}
       </div>
@@ -269,7 +310,7 @@ export default function StatsView() {
 
       {/* Pageviews Chart */}
       <div className="mb-6">
-        <BarChart data={pageviews.pageviews} label="Seitenaufrufe" />
+        <BarChart data={pageviews.pageviews} label="Seitenaufrufe" isHourly={period === "24h"} />
       </div>
 
       {/* Metrics Grid */}
