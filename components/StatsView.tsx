@@ -13,10 +13,14 @@ import {
 
 interface StatsData {
   stats: {
-    pageviews: { value: number };
-    visitors: { value: number };
-    bounces: { value: number };
-    totaltime: { value: number };
+    pageviews: number;
+    visitors: number;
+    visits: number;
+    bounces: number;
+    totaltime: number;
+  };
+  active: {
+    visitors: number;
   };
   pageviews: {
     pageviews: { x: string; y: number }[];
@@ -204,12 +208,12 @@ export default function StatsView() {
 
   if (!data) return null;
 
-  const { stats, pageviews, pages, referrers, browsers, devices } = data;
-  const avgTime = stats.pageviews.value
-    ? Math.round(stats.totaltime.value / stats.pageviews.value)
+  const { stats, active, pageviews, pages, referrers, browsers, devices } = data;
+  const avgTime = stats.visits
+    ? Math.round(stats.totaltime / stats.visits)
     : 0;
-  const bounceRate = stats.pageviews.value
-    ? Math.round((stats.bounces.value / stats.pageviews.value) * 100)
+  const bounceRate = stats.visits
+    ? Math.round((stats.bounces / stats.visits) * 100)
     : 0;
 
   return (
@@ -235,15 +239,20 @@ export default function StatsView() {
       </div>
 
       {/* KPI Cards */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard
           label="Seitenaufrufe"
-          value={stats.pageviews.value.toLocaleString("de-DE")}
+          value={stats.pageviews.toLocaleString("de-DE")}
           icon={Eye}
         />
         <StatCard
           label="Besucher"
-          value={stats.visitors.value.toLocaleString("de-DE")}
+          value={stats.visitors.toLocaleString("de-DE")}
+          icon={Users}
+        />
+        <StatCard
+          label="Gerade online"
+          value={active.visitors}
           icon={Users}
         />
         <StatCard

@@ -60,58 +60,48 @@ export async function GET(req: NextRequest) {
 
   const headers = {
     Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
   };
 
   const qs = `startAt=${startAt}&endAt=${endAt}`;
+  const base = `${UMAMI_API}/api/websites/${WEBSITE_ID}`;
 
   try {
-    const [statsRes, pageviewsRes, pagesRes, referrersRes, browsersRes, devicesRes] =
+    // Umami v3 API: stats returns flat values, metrics uses type= with
+    // valid types: referrer, browser, os, device, country, entry, exit, title, language, screen, event
+    // Note: "url" and "page" are NOT valid in v3 — use "entry" for top pages
+    const [statsRes, pageviewsRes, pagesRes, referrersRes, browsersRes, devicesRes, activeRes] =
       await Promise.all([
-        fetch(`${UMAMI_API}/api/websites/${WEBSITE_ID}/stats?${qs}`, { headers }),
-        fetch(
-          `${UMAMI_API}/api/websites/${WEBSITE_ID}/pageviews?${qs}&unit=${
-            period === "24h" ? "hour" : "day"
-          }`,
-          { headers }
-        ),
-        fetch(
-          `${UMAMI_API}/api/websites/${WEBSITE_ID}/metrics?${qs}&type=url`,
-          { headers }
-        ),
-        fetch(
-          `${UMAMI_API}/api/websites/${WEBSITE_ID}/metrics?${qs}&type=referrer`,
-          { headers }
-        ),
-        fetch(
-          `${UMAMI_API}/api/websites/${WEBSITE_ID}/metrics?${qs}&type=browser`,
-          { headers }
-        ),
-        fetch(
-          `${UMAMI_API}/api/websites/${WEBSITE_ID}/metrics?${qs}&type=device`,
-          { headers }
-        ),
+        fetch(`${base}/stats?${qs}`, { headers }),
+        fetch(`${base}/pageviews?${qs}&unit=${period === "24h" ? "hour" : "day"}`, { headers }),
+        fetch(`${base}/metrics?${qs}&type=entry`, { headers }),
+        fetch(`${base}/metrics?${qs}&type=referrer`, { headers }),
+        fetch(`${base}/metrics?${qs}&type=browser`, { headers }),
+        fetch(`${base}/metrics?${qs}&type=device`, { headers }),
+        fetch(`${base}/active`, { headers }),
       ]);
 
-    const [stats, pageviews, pages, referrers, browsers, devices] =
+    const [stats, pageviews, pages, referrers, browsers, devices, active] =
       await Promise.all([
-        statsRes.json(),
-        pageviewsRes.json(),
-        pagesRes.json(),
-        referrersRes.json(),
-        browsersRes.json(),
-        devicesRes.json(),
+        statsRes.ok ? statsRes.json() : { pageviews: 0, visitors: 0, visits: 0, bounces: 0, totaltime: 0 },
+        pageviewsRes.ok ? pageviewsRes.json() : { pageviews: [], sessions: [] },
+        pagesRes.ok ? pagesRes.json() : [],
+        referrersRes.ok ? referrersRes.json() : [],
+        browsersRes.ok ? browsersRes.json() : [],
+        devicesRes.ok ? devicesRes.json() : [],
+        activeRes.ok ? activeRes.json() : { visitors: 0 },
       ]);
 
     return NextResponse.json({
       stats,
+      active,
       pageviews,
       pages: (pages as { x: string; y: number }[]).slice(0, 10),
       referrers: (referrers as { x: string; y: number }[]).slice(0, 10),
       browsers: (browsers as { x: string; y: number }[]).slice(0, 5),
       devices: (devices as { x: string; y: number }[]).slice(0, 5),
     });
-  } catch {
+  } catch (e) {
+    console.error("Stats API error:", e);
     return NextResponse.json(
       { error: "Fehler beim Abrufen der Statistiken" },
       { status: 500 }
