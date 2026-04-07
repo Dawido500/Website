@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
-const umamiUrl = process.env.NEXT_PUBLIC_UMAMI_URL || "/umami/zugriff.js";
+const umamiUrl = process.env.NEXT_PUBLIC_UMAMI_URL || "/umami/script.js";
 
 export default function RootLayout({
   children,
