@@ -55,7 +55,8 @@ function serveStatic(pathname, res) {
 }
 
 function serveNextStatic(pathname, res) {
-  const safePath = path.normalize(pathname).replace(/^(\.\.(\/|\\|$))+/, "");
+  const decoded = decodeURIComponent(pathname);
+  const safePath = path.normalize(decoded).replace(/^(\.\.(\/|\\|$))+/, "");
   const filePath = path.join(__dirname, safePath.replace(/^\/_next\//, ".next/"));
   const ext = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[ext];
