@@ -5,11 +5,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://o-innenausbau.de"),
   title: {
-    default: "Obitko Innenausbau | Renovierung & Sanierung in Wiesbaden",
+    default: "Obitko Innenausbau | Sanierung & Renovierung Wiesbaden",
     template: "%s | Obitko Innenausbau",
   },
   description:
-    "Ihr Meisterbetrieb für Renovierung, Sanierung & Innenausbau in Wiesbaden, Mainz, Hofheim am Taunus, Frankfurt & Umgebung. Badsanierung, Komplettsanierung, Trockenbau & Bodenverlegung. Kostenlose Beratung ✓",
+    "Dein Partner für Sanierung & Innenausbau in Mainz, Wiesbaden und Umgebung. Renovierung & Trockenbau – Dein Zuhause in guten Händen. ✓ Jetzt anfragen!",
   keywords: [
     "Renovierung Wiesbaden",
     "Sanierung Wiesbaden",
@@ -49,9 +49,9 @@ export const metadata: Metadata = {
     apple: "/favicon.png",
   },
   openGraph: {
-    title: "Obitko Innenausbau | Renovierung & Sanierung in Wiesbaden",
+    title: "Obitko Innenausbau | Sanierung & Renovierung Wiesbaden",
     description:
-      "Meisterbetrieb für Renovierung, Sanierung & Innenausbau in Wiesbaden, Mainz, Hofheim & Frankfurt. Badsanierung, Komplettsanierung, Trockenbau & mehr.",
+      "Dein Partner für Sanierung & Innenausbau in Mainz, Wiesbaden und Umgebung. Renovierung & Trockenbau – Dein Zuhause in guten Händen. ✓ Jetzt anfragen!",
     type: "website",
     locale: "de_DE",
     siteName: "Obitko Innenausbau",

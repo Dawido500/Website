@@ -12,7 +12,7 @@ const leistungen: Leistung[] = [
   {
     icon: Home,
     title: "Komplettsanierung & Renovierung",
-    text: "Vom leeren Altbau zum fertigen Zuhause. Wir kümmern uns um alles – Böden, Wände, Decken und bei Bedarf koordinieren wir Partnerfirmen für Elektrik und Sanitär. Ein Ansprechpartner, ein Zeitplan, keine Überraschungen.",
+    text: "Wir verwandeln Ihre Immobilie – von Böden über Wände bis Decken. Alles aus einer Hand, ein Ansprechpartner, ein Zeitplan. Bei Bedarf koordinieren wir Partnerfirmen für Elektrik und Sanitär.",
   },
   {
     icon: LayoutGrid,
@@ -33,11 +33,14 @@ export default function Leistungen() {
         {/* Header */}
         <FadeIn className="mb-16 text-center">
           <p className="mb-3 font-body text-[12px] font-medium uppercase tracking-[3px] text-accent">
-            Was wir machen
+            Dein Partner für Sanierung und Innenausbau
           </p>
           <h2 className="font-heading text-[36px] text-dark">
             Unsere Leistungen
           </h2>
+          <p className="mx-auto mt-4 max-w-2xl font-body text-[15px] leading-relaxed text-text">
+            Ob Komplettsanierung, Badsanierung oder Trockenbau – wir sind Ihr Ansprechpartner in Wiesbaden, Mainz, Hofheim am Taunus, Frankfurt und Umgebung.
+          </p>
         </FadeIn>
 
         {/* Cards Grid */}
