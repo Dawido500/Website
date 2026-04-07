@@ -69,36 +69,54 @@ export async function GET(req: NextRequest) {
     // Umami v3 API: stats returns flat values, metrics uses type= with
     // valid types: referrer, browser, os, device, country, entry, exit, title, language, screen, event
     // Note: "url" and "page" are NOT valid in v3 — use "entry" for top pages
-    const [statsRes, pageviewsRes, pagesRes, referrersRes, browsersRes, devicesRes, activeRes] =
+    const [statsRes, pageviewsRes, hourlyRes, pagesRes, referrersRes, browsersRes, devicesRes, countriesRes, osRes, activeRes] =
       await Promise.all([
         fetch(`${base}/stats?${qs}`, { headers }),
         fetch(`${base}/pageviews?${qs}&unit=${period === "24h" ? "hour" : "day"}`, { headers }),
+        // Always fetch hourly data for the "Besucherzeit" chart
+        fetch(`${base}/pageviews?${qs}&unit=hour`, { headers }),
         fetch(`${base}/metrics?${qs}&type=entry`, { headers }),
         fetch(`${base}/metrics?${qs}&type=referrer`, { headers }),
         fetch(`${base}/metrics?${qs}&type=browser`, { headers }),
         fetch(`${base}/metrics?${qs}&type=device`, { headers }),
+        fetch(`${base}/metrics?${qs}&type=country`, { headers }),
+        fetch(`${base}/metrics?${qs}&type=os`, { headers }),
         fetch(`${base}/active`, { headers }),
       ]);
 
-    const [stats, pageviews, pages, referrers, browsers, devices, active] =
+    const [stats, pageviews, hourlyRaw, pages, referrers, browsers, devices, countries, os, active] =
       await Promise.all([
         statsRes.ok ? statsRes.json() : { pageviews: 0, visitors: 0, visits: 0, bounces: 0, totaltime: 0 },
         pageviewsRes.ok ? pageviewsRes.json() : { pageviews: [], sessions: [] },
+        hourlyRes.ok ? hourlyRes.json() : { pageviews: [], sessions: [] },
         pagesRes.ok ? pagesRes.json() : [],
         referrersRes.ok ? referrersRes.json() : [],
         browsersRes.ok ? browsersRes.json() : [],
         devicesRes.ok ? devicesRes.json() : [],
+        countriesRes.ok ? countriesRes.json() : [],
+        osRes.ok ? osRes.json() : [],
         activeRes.ok ? activeRes.json() : { visitors: 0 },
       ]);
+
+    // Aggregate hourly data into hours-of-day (0-23)
+    const hourlyAgg: number[] = new Array(24).fill(0);
+    for (const entry of (hourlyRaw as { pageviews: { x: string; y: number }[] }).pageviews) {
+      const hour = new Date(entry.x).getHours();
+      hourlyAgg[hour] += entry.y;
+    }
+    const hourlyByTime = hourlyAgg.map((y, h) => ({ x: `${h}:00`, y }));
 
     return NextResponse.json({
       stats,
       active,
       pageviews,
+      hourlyByTime,
       pages: (pages as { x: string; y: number }[]).slice(0, 10),
       referrers: (referrers as { x: string; y: number }[]).slice(0, 10),
       browsers: (browsers as { x: string; y: number }[]).slice(0, 5),
       devices: (devices as { x: string; y: number }[]).slice(0, 5),
+      countries: (countries as { x: string; y: number }[]).slice(0, 10),
+      os: (os as { x: string; y: number }[]).slice(0, 5),
     });
   } catch (e) {
     console.error("Stats API error:", e);

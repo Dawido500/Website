@@ -7,6 +7,8 @@ import {
   Clock,
   MousePointerClick,
   ArrowUpRight,
+  Globe,
+  Monitor,
 } from "lucide-react";
 
 /* ───── Types ───── */
@@ -26,10 +28,13 @@ interface StatsData {
     pageviews: { x: string; y: number }[];
     sessions: { x: string; y: number }[];
   };
+  hourlyByTime: { x: string; y: number }[];
   pages: { x: string; y: number }[];
   referrers: { x: string; y: number }[];
   browsers: { x: string; y: number }[];
   devices: { x: string; y: number }[];
+  countries: { x: string; y: number }[];
+  os: { x: string; y: number }[];
 }
 
 type Period = "24h" | "7d" | "30d" | "90d";
@@ -249,7 +254,7 @@ export default function StatsView() {
 
   if (!data) return null;
 
-  const { stats, active, pageviews, pages, referrers, browsers, devices } = data;
+  const { stats, active, pageviews, hourlyByTime, pages, referrers, browsers, devices, countries, os } = data;
   const avgTime = stats.visits
     ? Math.round(stats.totaltime / stats.visits)
     : 0;
@@ -313,6 +318,11 @@ export default function StatsView() {
         <BarChart data={pageviews.pageviews} label="Seitenaufrufe" isHourly={period === "24h"} />
       </div>
 
+      {/* Hourly Chart */}
+      <div className="mb-6">
+        <BarChart data={hourlyByTime} label="Besucherzeit – Wann kommen die Besucher?" />
+      </div>
+
       {/* Metrics Grid */}
       <div className="grid gap-4 md:grid-cols-2">
         <MetricTable title="Top Seiten" data={pages} icon={Eye} />
@@ -321,7 +331,9 @@ export default function StatsView() {
           data={referrers}
           icon={ArrowUpRight}
         />
+        <MetricTable title="Länder" data={countries} icon={Globe} />
         <MetricTable title="Browser" data={browsers} icon={MousePointerClick} />
+        <MetricTable title="Betriebssystem" data={os} icon={Monitor} />
         <MetricTable title="Geräte" data={devices} icon={Users} />
       </div>
     </div>
