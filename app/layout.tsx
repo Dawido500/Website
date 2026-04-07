@@ -8,7 +8,11 @@ export const metadata: Metadata = {
   description:
     "Familienbetrieb in dritter Generation. Komplettsanierung, Innenausbau & Badsanierung im Rhein-Main-Gebiet. Persönlich, sorgfältig, ohne Kompromisse.",
   icons: {
-    icon: "/favicon.svg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: "/favicon.png",
   },
   openGraph: {
     title: "Obitko Innenausbau – Dein Partner für Sanierung und Innenausbau",

@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
   <rect width="32" height="32" rx="7" fill="#5B7C72"/>
-  <text x="16" y="22" text-anchor="middle" font-family="serif" font-weight="bold" font-size="20" fill="#FAFAF8">O</text>
+  <!-- House outline -->
+  <path d="M16 6 L6 14 L6 26 Q6 27 7 27 L25 27 Q26 27 26 26 L26 14 Z" stroke="#FAFAF8" stroke-width="2" fill="none" stroke-linejoin="round"/>
+  <!-- Inner boxes (Innenausbau) -->
+  <rect x="10" y="17" width="5" height="5" rx="0.5" stroke="#FAFAF8" stroke-width="1.5" fill="none"/>
+  <rect x="14" y="21" width="6" height="6" rx="0.5" stroke="#FAFAF8" stroke-width="1.5" fill="none"/>
 </svg>
