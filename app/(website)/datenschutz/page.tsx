@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Datenschutz",
+  robots: { index: false, follow: true },
+};
+
 export default function DatenschutzPage() {
   return (
     <section className="bg-white pb-24 pt-40 lg:pb-32 lg:pt-48">

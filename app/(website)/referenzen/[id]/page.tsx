@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
 
 import { prisma } from "@/lib/prisma";
@@ -6,6 +8,34 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import ReferenzGalerie from "@/components/ReferenzGalerie";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const referenz = await prisma.referenz.findUnique({ where: { id } });
+
+  if (!referenz) {
+    return { title: "Projekt nicht gefunden" };
+  }
+
+  const title = `${referenz.titel}${referenz.stadt ? ` in ${referenz.stadt}` : ""} – Referenz`;
+  const description = referenz.beschreibung
+    ? referenz.beschreibung.substring(0, 155)
+    : `${referenz.kategorie}${referenz.stadt ? ` in ${referenz.stadt}` : ""} – Obitko Innenausbau. Professionelle ${referenz.kategorie} vom Meisterbetrieb.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: referenz.titelbild ? [{ url: referenz.titelbild }] : undefined,
+    },
+  };
+}
 
 export default async function ReferenzDetailPage({
   params,

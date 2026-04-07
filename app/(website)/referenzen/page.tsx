@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
+
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Referenzen – Renovierung & Sanierung Projekte in Wiesbaden",
+  description:
+    "Sehen Sie unsere abgeschlossenen Projekte: Komplettsanierungen, Badsanierungen, Trockenbau & Innenausbau in Wiesbaden und Rhein-Main. Vorher-Nachher-Bilder.",
+  alternates: {
+    canonical: "https://o-innenausbau.de/referenzen",
+  },
+};
 
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
