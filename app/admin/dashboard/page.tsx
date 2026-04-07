@@ -8,12 +8,14 @@ import { useRouter } from "next/navigation";
 import {
   LayoutGrid,
   Mail,
+  BarChart3,
   LogOut,
   Plus,
   Pencil,
   Trash2,
   ChevronRight,
 } from "lucide-react";
+import StatsView from "@/components/StatsView";
 
 /* ───── Types ───── */
 
@@ -40,7 +42,7 @@ interface Anfrage {
   gelesen: boolean;
 }
 
-type View = "referenzen" | "anfragen";
+type View = "referenzen" | "anfragen" | "statistiken";
 
 /* ───── Sidebar ───── */
 
@@ -63,6 +65,7 @@ function Sidebar({
   const items: { key: View; label: string; icon: typeof LayoutGrid }[] = [
     { key: "referenzen", label: "Referenzen", icon: LayoutGrid },
     { key: "anfragen", label: "Kontaktanfragen", icon: Mail },
+    { key: "statistiken", label: "Statistiken", icon: BarChart3 },
   ];
 
   return (
@@ -150,6 +153,14 @@ function MobileNav({
             {unreadCount}
           </span>
         )}
+      </button>
+      <button
+        onClick={() => setView("statistiken")}
+        className={`rounded-lg px-3 py-1.5 font-body text-xs font-medium ${
+          view === "statistiken" ? "bg-accent/10 text-accent" : "text-text"
+        }`}
+      >
+        Stats
       </button>
       <button
         onClick={async () => {
@@ -529,6 +540,7 @@ export default function DashboardPage() {
           <main className="p-6 lg:p-10">
             {view === "referenzen" && <ReferenzenView />}
             {view === "anfragen" && <AnfragenView />}
+            {view === "statistiken" && <StatsView />}
           </main>
         </div>
       </div>
