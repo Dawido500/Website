@@ -22,6 +22,7 @@ const MIME_TYPES = {
   ".txt": "text/plain",
   ".xml": "application/xml",
   ".webmanifest": "application/manifest+json",
+  ".html": "text/html",
 };
 
 const hostname = process.env.HOSTNAME || "0.0.0.0";
