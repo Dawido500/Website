@@ -97,16 +97,24 @@ function BarChart({
   data,
   label,
   isHourly,
+  rawLabels,
 }: {
   data: { x: string; y: number }[];
   label: string;
   isHourly?: boolean;
+  rawLabels?: boolean;
 }) {
   const max = Math.max(...data.map((d) => d.y), 1);
   const total = data.reduce((sum, d) => sum + d.y, 0);
 
   // Show every Nth label to avoid overlap
   const labelEvery = data.length > 14 ? Math.ceil(data.length / 7) : data.length > 7 ? 2 : 1;
+
+  const getLabel = (x: string, short?: boolean) => {
+    if (rawLabels) return x;
+    if (isHourly) return formatHour(x);
+    return short ? formatDate(x, true) : formatDate(x);
+  };
 
   return (
     <div className="rounded-xl border border-[#E0DDD6] bg-white p-5">
@@ -137,15 +145,13 @@ function BarChart({
               <div className="pointer-events-none absolute -top-10 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-dark px-2 py-1 font-body text-[10px] text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
                 <span className="font-medium">{d.y} Aufrufe</span>
                 <br />
-                <span className="text-white/70">
-                  {isHourly ? formatHour(d.x) : formatDate(d.x)}
-                </span>
+                <span className="text-white/70">{getLabel(d.x)}</span>
               </div>
             </div>
             {/* Date label */}
             {i % labelEvery === 0 && (
               <span className="mt-1.5 font-body text-[9px] text-text/40 leading-none">
-                {isHourly ? formatHour(d.x) : formatDate(d.x, true)}
+                {getLabel(d.x, true)}
               </span>
             )}
           </div>
@@ -320,7 +326,7 @@ export default function StatsView() {
 
       {/* Hourly Chart */}
       <div className="mb-6">
-        <BarChart data={hourlyByTime} label="Besucherzeit – Wann kommen die Besucher?" />
+        <BarChart data={hourlyByTime} label="Besucherzeit – Wann kommen die Besucher?" rawLabels />
       </div>
 
       {/* Metrics Grid */}
