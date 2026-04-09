@@ -26,7 +26,7 @@ export default async function ReferenzenTeaser() {
   }
 
   return (
-    <section id="referenzen" className="bg-white py-24 lg:py-32">
+    <section id="referenzen" className="bg-warm py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <FadeIn className="mb-12 flex items-end justify-between">
           <div>

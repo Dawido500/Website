@@ -22,8 +22,8 @@ export default function Home() {
     <main>
       <Hero />
       <Leistungen />
-      <UeberUns />
       <ReferenzenTeaser />
+      <UeberUns />
       <Kontakt />
     </main>
   );
