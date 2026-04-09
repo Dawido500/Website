@@ -39,7 +39,7 @@ export default function Leistungen() {
             Unsere Leistungen
           </h2>
           <p className="mx-auto mt-4 max-w-2xl font-body text-[15px] leading-relaxed text-text">
-            Ob Komplettsanierung, Badsanierung oder Trockenbau – wir sind Ihr Ansprechpartner in Wiesbaden, Mainz, Hofheim am Taunus, Frankfurt und Umgebung.
+            Wir sind für Sie unterwegs in Wiesbaden, Mainz, Hofheim am Taunus, Frankfurt am Main und Umgebung.
           </p>
         </FadeIn>
 
